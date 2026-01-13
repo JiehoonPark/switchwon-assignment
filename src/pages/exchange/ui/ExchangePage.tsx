@@ -1,3 +1,11 @@
+import { AppHeader } from "@/widgets/app-header";
+import { ExchangeDashboard } from "@/widgets/exchange-dashboard";
+
 export function ExchangePage() {
-  return <main>환전 페이지</main>;
+  return (
+    <main>
+      <AppHeader />
+      <ExchangeDashboard />
+    </main>
+  );
 }

@@ -1,3 +1,11 @@
+import { AppHeader } from "@/widgets/app-header";
+import { OrderHistory } from "@/widgets/order-history";
+
 export function OrdersPage() {
-  return <main>환전 내역 페이지</main>;
+  return (
+    <main>
+      <AppHeader />
+      <OrderHistory />
+    </main>
+  );
 }
