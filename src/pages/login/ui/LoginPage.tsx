@@ -1,3 +1,9 @@
+import { LoginForm } from "@/features/auth";
+
 export function LoginPage() {
-  return <main>로그인 페이지</main>;
+  return (
+    <main>
+      <LoginForm />
+    </main>
+  );
 }
