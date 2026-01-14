@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --gnb-height: 75px;
 }
 
 @theme inline {

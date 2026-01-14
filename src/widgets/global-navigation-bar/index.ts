@@ -1,1 +1,1 @@
-export { GlobalNavigationBar } from "./ui/AppHeader";
+export { GlobalNavigationBar } from "./ui/GlobalNavigationBar";

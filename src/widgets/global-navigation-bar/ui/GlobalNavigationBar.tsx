@@ -1,11 +1,10 @@
 "use client";
 
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useLogoutMutation } from "@/features/auth";
-import { NAVIGATION_BAR_HEIGHT, ROUTES } from "@/shared/config";
+import { ROUTES } from "@/shared/config";
 import { cn } from "@/shared/lib";
 import { Button } from "@/shared/ui";
 import { Rss } from "lucide-react";
@@ -25,15 +24,10 @@ export function GlobalNavigationBar() {
     router.replace(ROUTES.login);
   };
 
-  const navStyle = {
-    ["--nav-height" as string]: `${NAVIGATION_BAR_HEIGHT}px`,
-  } satisfies CSSProperties;
-
   return (
     <header
       data-slot="global-navigation-bar"
-      className="fixed left-0 right-0 top-0 z-20 h-[var(--nav-height)] border-b border-gray-300 bg-white/95 px-10 py-4 backdrop-blur"
-      style={navStyle}
+      className="fixed left-0 right-0 top-0 z-20 h-(--gnb-height) border-b border-gray-300 bg-white/95 px-10 py-4 backdrop-blur"
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-6">
         <div className="flex gap-[10.25px] items-center">
