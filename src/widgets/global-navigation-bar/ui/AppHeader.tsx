@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -24,11 +25,15 @@ export function GlobalNavigationBar() {
     router.replace(ROUTES.login);
   };
 
+  const navStyle = {
+    ["--nav-height" as string]: `${NAVIGATION_BAR_HEIGHT}px`,
+  } satisfies CSSProperties;
+
   return (
     <header
       data-slot="global-navigation-bar"
-      className="fixed left-0 right-0 top-0 z-20 border-b border-gray-300 bg-white/95 backdrop-blur px-10 py-4 h-[var(--nav-height)]"
-      style={{ ["--nav-height" as string]: `${NAVIGATION_BAR_HEIGHT}px` }}
+      className="fixed left-0 right-0 top-0 z-20 h-[var(--nav-height)] border-b border-gray-300 bg-white/95 px-10 py-4 backdrop-blur"
+      style={navStyle}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-6">
         <div className="flex gap-[10.25px] items-center">
