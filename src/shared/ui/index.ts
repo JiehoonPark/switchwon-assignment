@@ -35,3 +35,4 @@ export {
   TableCaption,
 } from "./table";
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs";
+export { PageHeader } from "./PageHeader";
