@@ -36,3 +36,4 @@ export {
 } from "./table";
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs";
 export { PageHeader } from "./PageHeader";
+export { Spinner } from "./spinner";

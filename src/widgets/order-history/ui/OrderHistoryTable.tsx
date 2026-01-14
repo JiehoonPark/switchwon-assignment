@@ -23,8 +23,8 @@ export function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
     }).format(value);
 
   return (
-    <Table className="min-w-full text-left text-sm text-gray-700 relative">
-      <TableHeader className="bg-gray-0 text-gray-600 fixed h-12.25">
+    <Table className="relative min-w-full text-left text-sm text-gray-700">
+      <TableHeader className="sticky top-0 z-10 bg-gray-0 text-gray-600">
         <TableRow>
           {HEADERS.map((header) => (
             <TableHead

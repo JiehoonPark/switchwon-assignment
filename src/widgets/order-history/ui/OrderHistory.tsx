@@ -3,9 +3,9 @@
 import type { ReactNode } from "react";
 
 import { useOrdersQuery } from "@/features/exchange";
+import { Spinner } from "@/shared/ui";
 import { OrderHistoryEmpty } from "./OrderHistoryEmpty";
 import { OrderHistoryError } from "./OrderHistoryError";
-import { OrderHistorySkeleton } from "./OrderHistorySkeleton";
 import { OrderHistoryTable } from "./OrderHistoryTable";
 
 export function OrderHistory() {
@@ -14,12 +14,18 @@ export function OrderHistory() {
   return (
     <section
       data-slot="order-history"
-      className="flex flex-col border rounded-xl overflow-hidden border-gray-300 py-4 h-160.25"
+      className="flex h-160.25 flex-col overflow-hidden rounded-xl border border-gray-300 bg-white"
     >
-      {isLoading && <OrderHistorySkeleton />}
+      {isLoading && (
+        <div className="flex flex-1 items-center justify-center">
+          <Spinner />
+        </div>
+      )}
       {isError && <OrderHistoryError />}
       {!isLoading && !isError && orders && orders.length > 0 && (
-        <OrderHistoryTable orders={orders} />
+        <div className="h-full overflow-y-auto">
+          <OrderHistoryTable orders={orders} />
+        </div>
       )}
       {!isLoading && !isError && orders?.length === 0 && <OrderHistoryEmpty />}
     </section>
