@@ -9,6 +9,16 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-pretendard);
+  --color-blue-500: #3479eb;
+  --color-gray-0: #f7f8f9;
+  --color-gray-300: #d0d6db;
+  --color-gray-600: #646f7c;
+  --color-gray-700: #374553;
+  --color-cta: #1b2334;
+  --color-danger: #fe5050;
+  --color-buy-primary: #fe5050;
+  --color-sell-primary: #3b6eff;
+  --color-white: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
