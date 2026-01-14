@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { isAuthenticated } from "@/features/auth";
+import { isAuthenticated } from "@/features/auth/server";
 import { ROUTES } from "@/shared/config";
 
 export default async function Page() {

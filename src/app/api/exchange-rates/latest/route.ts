@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getAuthToken } from "@/features/auth";
+import { getAuthToken } from "@/features/auth/server";
 import { API_BASE_URL } from "@/shared/config";
 
 export const dynamic = "force-dynamic";

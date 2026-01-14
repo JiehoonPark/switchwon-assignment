@@ -1,4 +1,4 @@
-import { requireAuth } from "@/features/auth";
+import { requireAuth } from "@/features/auth/server";
 
 export default async function ProtectedLayout({
   children,
