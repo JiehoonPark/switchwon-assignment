@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/shared/ui";
 
-const HEADERS = ["거래 ID", "거래 일시", "매수 금액", "적용 환율", "매도 금액"];
+const HEADERS = ["거래 ID", "거래 일시", "매수 금액", "체결 환율", "매도 금액"];
 
 type OrderHistoryTableProps = {
   orders: Order[];
