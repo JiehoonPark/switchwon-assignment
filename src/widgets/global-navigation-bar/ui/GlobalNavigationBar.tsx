@@ -27,10 +27,10 @@ export function GlobalNavigationBar() {
   return (
     <header
       data-slot="global-navigation-bar"
-      className="fixed left-0 right-0 top-0 z-20 h-[var(--gnb-height)] border-b border-gray-300 bg-white/95 backdrop-blur"
+      className="fixed left-0 right-0 top-0 z-20 h-auto border-b border-gray-300 bg-white/95 backdrop-blur"
     >
-      <nav className="mx-auto flex w-full max-w-screen-xl items-center justify-between gap-3 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4 lg:px-10">
-        <div className="flex gap-[10.25px] items-center">
+      <nav className="mx-auto flex w-full max-w-screen-xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-4 lg:px-10">
+        <div className="flex items-center gap-[10.25px]">
           <Rss
             aria-hidden="true"
             className="w-[19.5px] h-[19.5px] text-blue-500"
@@ -41,8 +41,8 @@ export function GlobalNavigationBar() {
           </span>
         </div>
 
-        <div className="flex gap-10">
-          <div className="flex items-center gap-1.5">
+        <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-6 lg:gap-10">
+          <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-6">
             {NAV_ITEMS.map((item) => {
               const active = pathname === item.href;
               return (
@@ -50,7 +50,7 @@ export function GlobalNavigationBar() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "w-29.5 text-center text-[20px]",
+                    "block rounded-lg px-3 py-2 text-center text-[18px] sm:text-[20px]",
                     active ? "font-bold text-cta" : "font-medium text-[#8899AA]"
                   )}
                   aria-current={active ? "page" : undefined}
@@ -64,7 +64,7 @@ export function GlobalNavigationBar() {
             type="button"
             onClick={handleLogout}
             disabled={isPending}
-            className="rounded-xl bg-blue-500 px-4 py-2 text-[20px] font-semibold leading-[133%] text-white"
+            className="w-full rounded-xl bg-blue-500 px-4 py-2 text-[18px] font-semibold leading-[133%] text-white sm:w-auto sm:text-[20px]"
           >
             Log out
           </Button>

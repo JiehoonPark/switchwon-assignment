@@ -32,7 +32,7 @@ export function OrderHistoryTable({ orders, fallback }: OrderHistoryTableProps) 
           {HEADERS.map((header) => (
             <TableHead
               key={header}
-              className="px-4 py-3 font-medium text-gray-600"
+              className="px-4 py-3 font-medium text-gray-600 whitespace-nowrap"
             >
               {header}
             </TableHead>

@@ -169,101 +169,99 @@ export function ExchangeDashboard() {
   };
 
   return (
-    <section className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(360px,1fr)]">
-      <div className="flex min-w-0 flex-col gap-5">
-        <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-          {SUPPORTED_FOREX.map((currency) => {
-            const rate = exchangeRates?.find(
-              (item) => item.currency === currency
-            );
-            return (
-              <Card
-                className="flex min-w-0 flex-col rounded-xl border border-gray-300 px-8 py-6"
-                key={currency}
+    <section className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1.2fr)_minmax(360px,1fr)] lg:grid-rows-[auto_minmax(0,1fr)] lg:items-stretch">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:col-start-1 lg:row-start-1">
+        {SUPPORTED_FOREX.map((currency) => {
+          const rate = exchangeRates?.find(
+            (item) => item.currency === currency
+          );
+          return (
+            <Card
+              className="flex min-w-0 flex-col rounded-xl border border-gray-300 px-8 py-6"
+              key={currency}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-base font-semibold text-gray-600">
+                  {currency}
+                </span>
+                <div className="text-sm text-gray-600">
+                  {FOREX_LABELS[currency]}
+                </div>
+              </div>
+
+              <div className="text-2xl font-bold text-gray-800 mt-2">
+                {isRatesLoading
+                  ? "-"
+                  : rate
+                  ? `${formatNumber(rate.rate)} KRW`
+                  : "데이터 없음"}
+              </div>
+
+              <div
+                className={`flex items-center text-sm font-semibold mt-1 ${renderChangeColor(
+                  rate?.changePercentage ?? 0
+                )}`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-base font-semibold text-gray-600">
-                    {currency}
-                  </span>
-                  <div className="text-sm text-gray-600">
-                    {FOREX_LABELS[currency]}
+                {rate && (
+                  <div className="inline-flex items-center gap-1">
+                    {rate.changePercentage > 0 && (
+                      <>
+                        <TriangleUpIcon />
+                        <span>+</span>
+                      </>
+                    )}
+                    {rate.changePercentage < 0 && (
+                      <>
+                        <TriangleDownIcon />
+                        <span>-</span>
+                      </>
+                    )}
+                    <span>{Math.abs(rate.changePercentage).toFixed(2)}%</span>
                   </div>
-                </div>
+                )}
+              </div>
+            </Card>
+          );
+        })}
+      </div>
 
-                <div className="text-2xl font-bold text-gray-800 mt-2">
-                  {isRatesLoading
+      <Card className="flex min-w-0 flex-col rounded-xl border border-gray-300 bg-gray-0 px-6 py-6 md:px-8 lg:col-start-1 lg:row-start-2 lg:h-full">
+        <h2 className="text-[24px] font-extrabold text-gray-800 mb-8">
+          내 지갑
+        </h2>
+
+        <div className="flex flex-col gap-3">
+          {WALLET_DISPLAY_ORDER.map((currency) => {
+            const balance = walletSummary?.wallets.find(
+              (wallet) => wallet.currency === currency
+            )?.balance;
+            return (
+              <div
+                key={currency}
+                className="flex items-center justify-between text-[20px] text-gray-600"
+              >
+                <span className="font-medium">{currency}</span>
+                <span className="font-semibold">
+                  {isWalletLoading || typeof balance === "undefined"
                     ? "-"
-                    : rate
-                    ? `${formatNumber(rate.rate)} KRW`
-                    : "데이터 없음"}
-                </div>
-
-                <div
-                  className={`flex items-center text-sm font-semibold mt-1 ${renderChangeColor(
-                    rate?.changePercentage ?? 0
-                  )}`}
-                >
-                  {rate && (
-                    <div className="inline-flex items-center gap-1">
-                      {rate.changePercentage > 0 && (
-                        <>
-                          <TriangleUpIcon />
-                          <span>+</span>
-                        </>
-                      )}
-                      {rate.changePercentage < 0 && (
-                        <>
-                          <TriangleDownIcon />
-                          <span>-</span>
-                        </>
-                      )}
-                      <span>{Math.abs(rate.changePercentage).toFixed(2)}%</span>
-                    </div>
-                  )}
-                </div>
-              </Card>
+                    : formatCurrency(balance, currency as Currency)}
+                </span>
+              </div>
             );
           })}
         </div>
 
-        <Card className="flex min-w-0 flex-col rounded-xl border border-gray-300 bg-gray-0 px-6 py-6 md:px-8">
-          <h2 className="text-[24px] font-extrabold text-gray-800 mb-8">
-            내 지갑
-          </h2>
+        <div className="mt-auto flex items-center justify-between border-t border-gray-300 text-[20px] pt-5 pb-2">
+          <span className="font-semibold text-gray-600">총 보유 자산</span>
+          <span className="font-bold text-blue-500">
+            {walletSummary
+              ? formatCurrency(walletSummary.totalKrwBalance, "KRW")
+              : "-"}
+          </span>
+        </div>
+      </Card>
 
-          <div className="flex flex-col gap-3">
-            {WALLET_DISPLAY_ORDER.map((currency) => {
-              const balance = walletSummary?.wallets.find(
-                (wallet) => wallet.currency === currency
-              )?.balance;
-              return (
-                <div
-                  key={currency}
-                  className="flex items-center justify-between text-[20px] text-gray-600"
-                >
-                  <span className="font-medium">{currency}</span>
-                  <span className="font-semibold">
-                    {isWalletLoading || typeof balance === "undefined"
-                      ? "-"
-                      : formatCurrency(balance, currency as Currency)}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex items-center justify-between border-t border-gray-300 text-[20px] pt-5 pb-2 mt-auto">
-            <span className="font-semibold text-gray-600">총 보유 자산</span>
-            <span className="font-bold text-blue-500">
-              {walletSummary
-                ? formatCurrency(walletSummary.totalKrwBalance, "KRW")
-                : "-"}
-            </span>
-          </div>
-        </Card>
-      </div>
-
-      <Card className="min-w-0 rounded-xl border border-gray-300 bg-gray-0 px-4 py-5 sm:px-6">
+      <Card className="min-w-0 rounded-xl border border-gray-300 bg-gray-0 px-4 pt-5 pb-6 sm:px-6 lg:col-start-2 lg:row-span-2 lg:h-full">
         <div className="flex items-center h-8 mb-4">
           <Select
             value={targetCurrency}
