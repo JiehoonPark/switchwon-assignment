@@ -27,16 +27,16 @@ export function GlobalNavigationBar() {
   return (
     <header
       data-slot="global-navigation-bar"
-      className="fixed left-0 right-0 top-0 z-20 h-(--gnb-height) border-b border-gray-300 bg-white/95 px-10 py-4 backdrop-blur"
+      className="fixed left-0 right-0 top-0 z-20 h-[var(--gnb-height)] border-b border-gray-300 bg-white/95 px-10 py-4 backdrop-blur"
     >
-      <nav className="mx-auto flex max-w-6xl items-center justify-between gap-6">
+      <nav className="flex items-center justify-between">
         <div className="flex gap-[10.25px] items-center">
           <Rss
             aria-hidden="true"
             className="w-[19.5px] h-[19.5px] text-blue-500"
             strokeWidth={5}
           />
-          <span className="text-[20px] font-bold leading-[133%] text-gray-700">
+          <span className="text-[24px] font-bold leading-[133%] text-gray-700">
             Exchange app
           </span>
         </div>
