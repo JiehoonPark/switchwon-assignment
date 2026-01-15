@@ -169,16 +169,16 @@ export function ExchangeDashboard() {
   };
 
   return (
-    <section className="flex gap-6 h-196.75">
-      <div className="flex flex-col flex-1 gap-5">
-        <div className="w-full flex flex-1 gap-5">
+    <section className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(360px,1fr)]">
+      <div className="flex min-w-0 flex-col gap-5">
+        <div className="grid min-w-0 gap-4 sm:grid-cols-2">
           {SUPPORTED_FOREX.map((currency) => {
             const rate = exchangeRates?.find(
               (item) => item.currency === currency
             );
             return (
               <Card
-                className="flex flex-col w-76 h-35.75 border border-gray-300 px-8 py-6 rounded-xl"
+                className="flex min-w-0 flex-col rounded-xl border border-gray-300 px-8 py-6"
                 key={currency}
               >
                 <div className="flex items-center justify-between">
@@ -226,7 +226,7 @@ export function ExchangeDashboard() {
           })}
         </div>
 
-        <Card className="flex flex-col w-full h-full rounded-xl border bg-gray-0 px-8 py-6 border-gray-300">
+        <Card className="flex min-w-0 flex-col rounded-xl border border-gray-300 bg-gray-0 px-6 py-6 md:px-8">
           <h2 className="text-[24px] font-extrabold text-gray-800 mb-8">
             내 지갑
           </h2>
@@ -263,7 +263,7 @@ export function ExchangeDashboard() {
         </Card>
       </div>
 
-      <Card className="flex-1 rounded-xl border border-gray-300 bg-gray-0 px-6 py-5">
+      <Card className="min-w-0 rounded-xl border border-gray-300 bg-gray-0 px-4 py-5 sm:px-6">
         <div className="flex items-center h-8 mb-4">
           <Select
             value={targetCurrency}
