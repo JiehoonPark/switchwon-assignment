@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import type { Order } from "@/entities/order";
 import { formatCurrency, formatDateTime } from "@/shared/lib";
 import {
@@ -13,9 +15,10 @@ const HEADERS = ["거래 ID", "거래 일시", "매수 금액", "적용 환율",
 
 type OrderHistoryTableProps = {
   orders: Order[];
+  fallback?: ReactNode;
 };
 
-export function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
+export function OrderHistoryTable({ orders, fallback }: OrderHistoryTableProps) {
   const formatRate = (value: number) =>
     new Intl.NumberFormat("ko-KR", {
       minimumFractionDigits: 2,
@@ -37,23 +40,31 @@ export function OrderHistoryTable({ orders }: OrderHistoryTableProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {orders.map((order) => (
-          <TableRow key={order.orderId} className="border-t border-gray-300">
-            <TableCell className="px-4 py-3">{order.orderId}</TableCell>
-            <TableCell className="px-4 py-3 text-gray-600">
-              {formatDateTime(order.orderedAt)}
-            </TableCell>
-            <TableCell className="px-4 py-3 font-semibold text-gray-700">
-              {formatCurrency(order.fromAmount, order.fromCurrency)}
-            </TableCell>
-            <TableCell className="px-4 py-3 text-gray-600">
-              {formatRate(order.appliedRate)}
-            </TableCell>
-            <TableCell className="px-4 py-3 font-semibold text-gray-700">
-              {formatCurrency(order.toAmount, order.toCurrency)}
+        {orders.length === 0 && fallback ? (
+          <TableRow>
+            <TableCell colSpan={HEADERS.length} className="px-4 py-10">
+              {fallback}
             </TableCell>
           </TableRow>
-        ))}
+        ) : (
+          orders.map((order) => (
+            <TableRow key={order.orderId} className="border-t border-gray-300">
+              <TableCell className="px-4 py-3">{order.orderId}</TableCell>
+              <TableCell className="px-4 py-3 text-gray-600">
+                {formatDateTime(order.orderedAt)}
+              </TableCell>
+              <TableCell className="px-4 py-3 font-semibold text-gray-700">
+                {formatCurrency(order.fromAmount, order.fromCurrency)}
+              </TableCell>
+              <TableCell className="px-4 py-3 text-gray-600">
+                {formatRate(order.appliedRate)}
+              </TableCell>
+              <TableCell className="px-4 py-3 font-semibold text-gray-700">
+                {formatCurrency(order.toAmount, order.toCurrency)}
+              </TableCell>
+            </TableRow>
+          ))
+        )}
       </TableBody>
     </Table>
   );
