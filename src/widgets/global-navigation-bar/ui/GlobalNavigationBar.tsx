@@ -29,7 +29,7 @@ export function GlobalNavigationBar() {
       data-slot="global-navigation-bar"
       className="fixed left-0 right-0 top-0 z-20 h-[var(--gnb-height)] border-b border-gray-300 bg-white/95 backdrop-blur"
     >
-      <nav className="mx-auto flex w-full max-w-screen-xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-10">
+      <nav className="mx-auto flex w-full max-w-screen-xl items-center justify-between gap-3 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4 lg:px-10">
         <div className="flex gap-[10.25px] items-center">
           <Rss
             aria-hidden="true"
