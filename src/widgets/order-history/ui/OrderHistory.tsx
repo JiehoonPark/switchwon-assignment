@@ -9,15 +9,19 @@ import { OrderHistoryTable } from "./OrderHistoryTable";
 export function OrderHistory() {
   const { data: orders, isLoading, isError } = useOrdersQuery();
   const hasOrders = Boolean(orders && orders.length > 0);
-  const fallback = isLoading ? (
-    <div className="flex w-full items-center justify-center">
-      <Spinner />
-    </div>
-  ) : isError ? (
-    <OrderHistoryError />
-  ) : (
-    <OrderHistoryEmpty />
-  );
+  const fallback = (() => {
+    if (isLoading) {
+      return (
+        <div className="flex w-full items-center justify-center">
+          <Spinner />
+        </div>
+      );
+    }
+    if (isError) {
+      return <OrderHistoryError />;
+    }
+    return <OrderHistoryEmpty />;
+  })();
 
   return (
     <section

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "./globals.css";
-import { QueryProvider } from "./providers/QueryProvider";
+import "@/app/globals.css";
+
+import { QueryProvider } from "@/app/providers/QueryProvider";
 
 const pretendard = localFont({
-  src: "../assets/fonts/PretendardVariable.woff2",
+  src: "../src/assets/fonts/PretendardVariable.woff2",
   variable: "--font-pretendard",
   display: "swap",
 });

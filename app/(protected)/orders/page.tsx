@@ -1,4 +1,4 @@
-import { OrdersPage } from "@/views/orders";
+import { OrdersPage } from "@/pages/orders";
 
 export default function Page() {
   return <OrdersPage />;
