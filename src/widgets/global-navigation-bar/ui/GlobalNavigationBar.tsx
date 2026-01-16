@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 import { useLogoutMutation } from "@/features/auth";
 import { ROUTES } from "@/shared/config";
@@ -15,14 +15,12 @@ const NAV_ITEMS = [
   { href: ROUTES.orders, label: "환전내역" },
 ];
 const MOBILE_MENU_ID = "global-navigation-menu";
-const GNB_HEIGHT_CSS_VAR = "--gnb-height";
 
 export function GlobalNavigationBar() {
   const router = useRouter();
   const pathname = usePathname();
   const { mutateAsync, isPending } = useLogoutMutation();
   const [menuOpenPathname, setMenuOpenPathname] = useState<string | null>(null);
-  const headerRef = useRef<HTMLElement>(null);
 
   const isMobileMenuOpen = menuOpenPathname === pathname;
   const mobileMenuLabel = isMobileMenuOpen ? "메뉴 닫기" : "메뉴 열기";
@@ -33,31 +31,6 @@ export function GlobalNavigationBar() {
       ? "grid-rows-[1fr] opacity-100 translate-y-0 pointer-events-auto"
       : "grid-rows-[0fr] opacity-0 -translate-y-2 pointer-events-none"
   );
-
-  useEffect(() => {
-    const header = headerRef.current;
-    if (!header) return;
-
-    const updateGnbHeight = () => {
-      const nextHeight = Math.ceil(header.getBoundingClientRect().height);
-      document.documentElement.style.setProperty(
-        GNB_HEIGHT_CSS_VAR,
-        `${nextHeight}px`
-      );
-    };
-
-    updateGnbHeight();
-
-    if (typeof ResizeObserver === "undefined") return;
-
-    const observer = new ResizeObserver(() => {
-      updateGnbHeight();
-    });
-
-    observer.observe(header);
-
-    return () => observer.disconnect();
-  }, []);
 
   const handleToggleMobileMenu = () => {
     setMenuOpenPathname((prev) => (prev === pathname ? null : pathname));
@@ -74,7 +47,6 @@ export function GlobalNavigationBar() {
   return (
     <header
       data-slot="global-navigation-bar"
-      ref={headerRef}
       className="fixed left-0 right-0 top-0 z-20 h-auto border-b border-gray-300 bg-white/95 backdrop-blur"
     >
       <nav className="relative mx-auto flex w-full max-w-screen-xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-4 lg:px-10">
