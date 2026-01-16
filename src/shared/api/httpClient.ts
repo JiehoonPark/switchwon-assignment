@@ -46,7 +46,8 @@ async function request<Response, Body = undefined>(
 
   const data = (await response.json()) as ApiResponse<Response>;
 
-  if (!response.ok) {
+  if (!response.ok || data.code !== "OK") {
+    await redirectOnUnauthorized(response.status, data);
     throw createApiError(response.status, data);
   }
 
@@ -61,3 +62,18 @@ export const apiClient = {
     return request<Response, Body>(path, { ...init, method: "POST", body });
   },
 };
+
+async function redirectOnUnauthorized<T>(
+  status: number,
+  data: ApiResponse<T>,
+) {
+  const isUnauthorized = status === 401 || data.code === "UNAUTHORIZED";
+  if (!isUnauthorized) return;
+  if (typeof window === "undefined") return;
+
+  // 지연 import로 서버 번들 영향 최소화
+  const auth = await import("@/features/auth");
+  if (auth.logoutAndRedirectToLogin && auth.AUTH_REDIRECT_REASONS) {
+    void auth.logoutAndRedirectToLogin(auth.AUTH_REDIRECT_REASONS.unauthorized);
+  }
+}
