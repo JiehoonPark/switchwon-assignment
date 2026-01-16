@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import type { OrderQuoteRequest } from "@/entities/order";
 import { QUERY_KEYS } from "@/shared/config";
@@ -19,5 +19,6 @@ export function useOrderQuoteQuery(params: OrderQuoteRequest | null) {
       return getOrderQuote(params);
     },
     enabled: Boolean(params),
+    placeholderData: keepPreviousData,
   });
 }

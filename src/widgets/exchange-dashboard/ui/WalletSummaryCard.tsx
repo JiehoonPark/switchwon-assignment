@@ -11,11 +11,32 @@ type WalletSummaryCardProps = {
   className?: string;
 };
 
+type SkeletonLineProps = {
+  className?: string;
+};
+
+function SkeletonLine({ className }: SkeletonLineProps) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn("block animate-pulse rounded bg-gray-300", className)}
+    />
+  );
+}
+
 export function WalletSummaryCard({
   walletSummary,
   isLoading,
   className,
 }: WalletSummaryCardProps) {
+  const totalBalanceContent = (() => {
+    if (isLoading) {
+      return <SkeletonLine className="h-5 w-24" />;
+    }
+    if (!walletSummary) return "-";
+    return formatCurrency(walletSummary.totalKrwBalance, "KRW");
+  })();
+
   return (
     <Card
       className={cn(
@@ -32,16 +53,20 @@ export function WalletSummaryCard({
           const balance = walletSummary?.wallets.find(
             (wallet) => wallet.currency === currency,
           )?.balance;
+          const balanceContent =
+            isLoading || typeof balance === "undefined" ? (
+              <SkeletonLine className="h-5 w-24" />
+            ) : (
+              formatCurrency(balance, currency as Currency)
+            );
           return (
             <div
               key={currency}
               className="flex items-center justify-between text-[20px] text-gray-600"
             >
               <span className="font-medium">{currency}</span>
-              <span className="font-semibold">
-                {isLoading || typeof balance === "undefined"
-                  ? "-"
-                  : formatCurrency(balance, currency as Currency)}
+              <span className="font-semibold tabular-nums">
+                {balanceContent}
               </span>
             </div>
           );
@@ -50,10 +75,8 @@ export function WalletSummaryCard({
 
       <div className="mt-auto flex items-center justify-between border-t border-gray-300 pb-2 pt-5 text-[20px]">
         <span className="font-semibold text-gray-600">총 보유 자산</span>
-        <span className="font-bold text-blue-500">
-          {walletSummary
-            ? formatCurrency(walletSummary.totalKrwBalance, "KRW")
-            : "-"}
+        <span className="font-bold text-blue-500 tabular-nums">
+          {totalBalanceContent}
         </span>
       </div>
     </Card>

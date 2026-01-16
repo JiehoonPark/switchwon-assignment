@@ -6,11 +6,14 @@ import { useCreateOrderMutation, useOrderQuoteQuery } from "@/features/exchange"
 import type { Currency } from "@/shared/lib";
 import { formatCurrency } from "@/shared/lib";
 
+import { useDebouncedValue } from "./useDebouncedValue";
+
 type TradeMode = "buy" | "sell";
 
 const DEFAULT_TRADE_MODE: TradeMode = "buy";
 const DEFAULT_TARGET_CURRENCY: Currency = "USD";
 const KRW_CURRENCY: Currency = "KRW";
+const QUOTE_DEBOUNCE_MS = 300;
 
 type UseExchangeOrderFormParams = {
   exchangeRates?: ExchangeRate[];
@@ -24,24 +27,29 @@ export function useExchangeOrderForm({
     DEFAULT_TARGET_CURRENCY,
   );
   const [amount, setAmount] = useState("");
+  const debouncedAmount = useDebouncedValue(amount, QUOTE_DEBOUNCE_MS);
   const [formError, setFormError] = useState<string | null>(null);
 
   const isBuyMode = mode === "buy";
   const amountValue = Number(amount);
   const isAmountValid = Number.isFinite(amountValue) && amountValue > 0;
+  const quoteAmountValue = Number(debouncedAmount);
+  const isQuoteAmountValid =
+    Number.isFinite(quoteAmountValue) && quoteAmountValue > 0;
+  const isDebouncing = amount !== debouncedAmount;
 
   const selectedRate = exchangeRates?.find(
     (rate) => rate.currency === targetCurrency,
   );
 
   const quoteParams: OrderQuoteRequest | null = useMemo(() => {
-    if (!isAmountValid) return null;
+    if (!isQuoteAmountValid) return null;
     return {
       fromCurrency: isBuyMode ? KRW_CURRENCY : targetCurrency,
       toCurrency: isBuyMode ? targetCurrency : KRW_CURRENCY,
-      forexAmount: amountValue,
+      forexAmount: quoteAmountValue,
     };
-  }, [amountValue, isAmountValid, isBuyMode, targetCurrency]);
+  }, [isBuyMode, isQuoteAmountValid, quoteAmountValue, targetCurrency]);
 
   const {
     data: quote,
@@ -51,19 +59,21 @@ export function useExchangeOrderForm({
 
   const { mutateAsync, isPending } = useCreateOrderMutation();
 
-  const shouldShowQuote = isAmountValid && quote && !isQuoteError;
+  const shouldShowError = isQuoteError && !isDebouncing;
+  const shouldShowQuote = isAmountValid && quote && !shouldShowError;
   const krwAmount = shouldShowQuote ? quote.krwAmount : undefined;
   const appliedRate = shouldShowQuote
     ? quote.appliedRate
     : selectedRate?.rate;
 
   const quoteDisplayText = (() => {
+    if (!isAmountValid) return "-";
     if (shouldShowQuote && krwAmount !== undefined) {
       return formatCurrency(krwAmount, KRW_CURRENCY);
     }
-    if (isQuoteError) return "견적 조회 실패";
-    if (isQuoteLoading && isAmountValid) return "";
-    return "0";
+    if (shouldShowError) return "견적 조회 실패";
+    if (isQuoteLoading) return "-";
+    return "-";
   })();
 
   const handleSubmit = async () => {
@@ -104,10 +114,9 @@ export function useExchangeOrderForm({
 
   const isSubmitDisabled =
     isPending ||
-    isQuoteLoading ||
-    isQuoteError ||
     !isAmountValid ||
-    !selectedRate;
+    !selectedRate ||
+    shouldShowError;
 
   return {
     amount,

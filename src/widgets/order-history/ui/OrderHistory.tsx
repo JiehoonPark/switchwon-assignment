@@ -1,7 +1,6 @@
 "use client";
 
 import { useOrdersQuery } from "@/features/exchange";
-import { Spinner } from "@/shared/ui";
 import { OrderHistoryEmpty } from "./OrderHistoryEmpty";
 import { OrderHistoryError } from "./OrderHistoryError";
 import { OrderHistoryTable } from "./OrderHistoryTable";
@@ -10,13 +9,6 @@ export function OrderHistory() {
   const { data: orders, isLoading, isError } = useOrdersQuery();
   const hasOrders = Boolean(orders && orders.length > 0);
   const fallback = (() => {
-    if (isLoading) {
-      return (
-        <div className="flex w-full items-center justify-center">
-          <Spinner />
-        </div>
-      );
-    }
     if (isError) {
       return <OrderHistoryError />;
     }
@@ -31,7 +23,8 @@ export function OrderHistory() {
       <div className="h-full overflow-y-auto">
         <OrderHistoryTable
           orders={orders ?? []}
-          fallback={hasOrders ? undefined : fallback}
+          fallback={!isLoading && !hasOrders ? fallback : undefined}
+          isLoading={isLoading}
         />
       </div>
     </section>
