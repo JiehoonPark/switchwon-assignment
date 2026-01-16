@@ -1,8 +1,19 @@
 import { Rss } from "lucide-react";
 
 import { LoginForm } from "@/features/auth";
+import { AUTH_REDIRECT_MESSAGES, AUTH_REDIRECT_REASONS } from "@/features/auth";
+import { LoginNoticeModal } from "./LoginNoticeModal";
 
-export function LoginPage() {
+type LoginPageProps = {
+  reason?: string;
+};
+
+export function LoginPage({ reason }: LoginPageProps) {
+  const notice =
+    reason === AUTH_REDIRECT_REASONS.unauthorized
+      ? AUTH_REDIRECT_MESSAGES.unauthorized
+      : null;
+
   return (
     <main className="min-h-screen flex items-center justify-center px-4">
       <section className="max-w-[560px] w-full flex flex-col gap-12">
@@ -19,6 +30,8 @@ export function LoginPage() {
             로그인 정보를 입력해주세요.
           </div>
         </header>
+
+        {notice && <LoginNoticeModal message={notice} />}
 
         <LoginForm />
       </section>
