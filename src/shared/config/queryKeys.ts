@@ -1,7 +1,7 @@
 type OrderQuoteKeyParams = {
   fromCurrency: string;
   toCurrency: string;
-  forexAmount: number;
+  forexAmount: string;
 };
 
 export const QUERY_KEYS = {

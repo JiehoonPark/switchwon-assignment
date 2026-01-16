@@ -6,7 +6,7 @@ export async function getOrderQuote(params: OrderQuoteRequest) {
   const searchParams = new URLSearchParams({
     fromCurrency: params.fromCurrency,
     toCurrency: params.toCurrency,
-    forexAmount: String(params.forexAmount),
+    forexAmount: params.forexAmount,
   });
 
   const response = await apiClient.get<OrderQuote>(

@@ -14,13 +14,13 @@ export type OrderRequest = {
   exchangeRateId: number;
   fromCurrency: Currency;
   toCurrency: Currency;
-  forexAmount: number;
+  forexAmount: string;
 };
 
 export type OrderQuoteRequest = {
   fromCurrency: Currency;
   toCurrency: Currency;
-  forexAmount: number;
+  forexAmount: string;
 };
 
 export type OrderQuote = {
