@@ -3,7 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --gnb-height: 75px;
+  --gnb-height: 56px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --gnb-height: 75px;
+  }
 }
 
 @theme inline {
