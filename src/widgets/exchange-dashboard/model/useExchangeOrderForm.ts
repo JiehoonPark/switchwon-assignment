@@ -10,7 +10,10 @@ import type { Currency } from "@/shared/lib";
 
 import { useDebouncedValue } from "./useDebouncedValue";
 import { getApiErrorMessage, isUnauthorizedError } from "./errorHandling";
-import { normalizeAmountInput } from "./inputFormat";
+import {
+  isExceedingMaxIntegerDigits,
+  normalizeAmountInput,
+} from "./inputFormat";
 import { buildQuoteKey, useSettledQuoteState } from "./quoteState";
 import { getQuoteUiState } from "./quoteUiState";
 import { useFormErrors } from "./useFormErrors";
@@ -22,6 +25,7 @@ const DEFAULT_TARGET_CURRENCY: Currency = "USD";
 const KRW_CURRENCY: Currency = "KRW";
 const QUOTE_DEBOUNCE_MS = 300;
 const ZERO_AMOUNT = "0";
+const MAX_AMOUNT_INTEGER_DIGITS = 13;
 
 type UseExchangeOrderFormParams = {
   exchangeRates?: ExchangeRate[];
@@ -108,6 +112,9 @@ export function useExchangeOrderForm({
 
   const handleAmountChange = (value: string) => {
     const normalized = normalizeAmountInput(value, ZERO_AMOUNT);
+    if (isExceedingMaxIntegerDigits(normalized, MAX_AMOUNT_INTEGER_DIGITS)) {
+      return;
+    }
     setAmountState(normalized);
     if (!hasInteracted) {
       setHasInteracted(true);

@@ -9,3 +9,13 @@ export function normalizeAmountInput(value: string, zeroValue = "0") {
   const decimalPart = decimalParts.join("");
   return `${normalizedInteger}.${decimalPart}`;
 }
+
+export function isExceedingMaxIntegerDigits(
+  value: string,
+  maxIntegerDigits: number
+) {
+  if (!value) return false;
+  const [integerPart] = value.split(".");
+  const normalizedInteger = integerPart.replace(/^0+(?=\d)/, "") || "0";
+  return normalizedInteger.length > maxIntegerDigits;
+}
