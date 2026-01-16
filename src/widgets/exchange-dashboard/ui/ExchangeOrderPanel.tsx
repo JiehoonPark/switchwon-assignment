@@ -144,11 +144,11 @@ export function ExchangeOrderPanel({
           <div className="text-[20px] font-medium text-gray-600">
             {isBuyMode ? "필요 원화" : "받을 원화"}
           </div>
-          <div className="flex gap-2.5 rounded-xl border border-[#ACB4BB] bg-gray-100 p-6">
-            <div className="flex-1 text-right text-[20px] font-semibold text-gray-600 tabular-nums">
+          <div className="flex flex-col gap-2 rounded-xl border border-[#ACB4BB] bg-gray-100 p-6 text-right">
+            <div className="text-[20px] font-semibold text-gray-600 tabular-nums whitespace-nowrap">
               {quoteDisplayText}
             </div>
-            <span className="shrink-0 text-[20px] font-bold text-[#3479EB]">
+            <span className="text-[20px] font-bold text-[#3479EB]">
               원 받을 수 있어요
             </span>
           </div>
