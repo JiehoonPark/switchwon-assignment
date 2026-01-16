@@ -20,7 +20,7 @@ export function OrderHistory() {
       data-slot="order-history"
       className="flex h-160.25 flex-col overflow-hidden rounded-xl border border-gray-300 bg-white"
     >
-      <div className="h-full overflow-y-auto">
+      <div className="h-full overflow-x-auto overflow-y-auto">
         <OrderHistoryTable
           orders={orders ?? []}
           fallback={!isLoading && !hasOrders ? fallback : undefined}
