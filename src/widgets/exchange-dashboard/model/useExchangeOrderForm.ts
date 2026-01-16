@@ -2,11 +2,18 @@ import { useMemo, useState } from "react";
 
 import type { ExchangeRate } from "@/entities/exchange-rate";
 import type { OrderQuoteRequest, OrderRequest } from "@/entities/order";
-import { useCreateOrderMutation, useOrderQuoteQuery } from "@/features/exchange";
+import {
+  useCreateOrderMutation,
+  useOrderQuoteQuery,
+} from "@/features/exchange";
 import type { Currency } from "@/shared/lib";
-import { formatCurrency } from "@/shared/lib";
 
 import { useDebouncedValue } from "./useDebouncedValue";
+import { getApiErrorMessage, isUnauthorizedError } from "./errorHandling";
+import { normalizeAmountInput } from "./inputFormat";
+import { buildQuoteKey, useSettledQuoteState } from "./quoteState";
+import { getQuoteUiState } from "./quoteUiState";
+import { useFormErrors } from "./useFormErrors";
 
 type TradeMode = "buy" | "sell";
 
@@ -14,32 +21,43 @@ const DEFAULT_TRADE_MODE: TradeMode = "buy";
 const DEFAULT_TARGET_CURRENCY: Currency = "USD";
 const KRW_CURRENCY: Currency = "KRW";
 const QUOTE_DEBOUNCE_MS = 300;
+const ZERO_AMOUNT = "0";
 
 type UseExchangeOrderFormParams = {
   exchangeRates?: ExchangeRate[];
+  exchangeRatesError?: unknown;
 };
 
 export function useExchangeOrderForm({
   exchangeRates,
+  exchangeRatesError,
 }: UseExchangeOrderFormParams) {
   const [mode, setMode] = useState<TradeMode>(DEFAULT_TRADE_MODE);
   const [targetCurrency, setTargetCurrency] = useState<Currency>(
-    DEFAULT_TARGET_CURRENCY,
+    DEFAULT_TARGET_CURRENCY
   );
-  const [amount, setAmount] = useState("");
+  const [amount, setAmountState] = useState(ZERO_AMOUNT);
   const debouncedAmount = useDebouncedValue(amount, QUOTE_DEBOUNCE_MS);
-  const [formError, setFormError] = useState<string | null>(null);
-
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const {
+    clearFormError,
+    formError,
+    lastSubmitErrorInput,
+    resetFormErrors,
+    resetSubmitErrorOnAmountChange,
+    setFormError,
+    setLastSubmitErrorInput,
+  } = useFormErrors();
   const isBuyMode = mode === "buy";
   const amountValue = Number(amount);
-  const isAmountValid = Number.isFinite(amountValue) && amountValue > 0;
-  const quoteAmountValue = Number(debouncedAmount);
-  const isQuoteAmountValid =
-    Number.isFinite(quoteAmountValue) && quoteAmountValue > 0;
-  const isDebouncing = amount !== debouncedAmount;
+  const debouncedAmountValue = Number(debouncedAmount);
+  const isDebouncedAmountValid =
+    Number.isFinite(debouncedAmountValue) && debouncedAmountValue > 0;
+  const shouldShowZero = !hasInteracted || !isDebouncedAmountValid;
+  const isQuoteAmountValid = hasInteracted && isDebouncedAmountValid;
 
   const selectedRate = exchangeRates?.find(
-    (rate) => rate.currency === targetCurrency,
+    (rate) => rate.currency === targetCurrency
   );
 
   const quoteParams: OrderQuoteRequest | null = useMemo(() => {
@@ -47,48 +65,79 @@ export function useExchangeOrderForm({
     return {
       fromCurrency: isBuyMode ? KRW_CURRENCY : targetCurrency,
       toCurrency: isBuyMode ? targetCurrency : KRW_CURRENCY,
-      forexAmount: quoteAmountValue,
+      forexAmount: debouncedAmount,
     };
-  }, [isBuyMode, isQuoteAmountValid, quoteAmountValue, targetCurrency]);
+  }, [debouncedAmount, isBuyMode, isQuoteAmountValid, targetCurrency]);
 
   const {
     data: quote,
-    isFetching: isQuoteLoading,
-    isError: isQuoteError,
+    error: quoteError,
+    isFetching: isQuoteFetching,
   } = useOrderQuoteQuery(quoteParams);
 
   const { mutateAsync, isPending } = useCreateOrderMutation();
 
-  const shouldShowError = isQuoteError && !isDebouncing;
-  const shouldShowQuote = isAmountValid && quote && !shouldShowError;
-  const krwAmount = shouldShowQuote ? quote.krwAmount : undefined;
-  const appliedRate = shouldShowQuote
-    ? quote.appliedRate
-    : selectedRate?.rate;
+  const isSettledInput = amount === debouncedAmount;
+  const currentQuoteErrorMessage = getApiErrorMessage(quoteError);
+  const quoteParamsKey = buildQuoteKey(quoteParams);
+  const settledState = useSettledQuoteState({
+    quoteParamsKey,
+    isSettledInput,
+    isQuoteFetching,
+    quote,
+    errorMessage: currentQuoteErrorMessage,
+  });
+  const {
+    appliedRate,
+    displayQuoteError,
+    quoteDisplayText,
+    shouldBlockSubmitForFormError,
+    shouldBlockSubmitForQuote,
+    shouldShowQuoteError,
+  } = getQuoteUiState({
+    amount,
+    currency: KRW_CURRENCY,
+    formError,
+    isQuoteFetching,
+    quoteParamsKey,
+    selectedRate,
+    settledState,
+    shouldShowZero,
+    lastSubmitErrorInput,
+  });
 
-  const quoteDisplayText = (() => {
-    if (!isAmountValid) return "-";
-    if (shouldShowQuote && krwAmount !== undefined) {
-      return formatCurrency(krwAmount, KRW_CURRENCY);
+  const handleAmountChange = (value: string) => {
+    const normalized = normalizeAmountInput(value, ZERO_AMOUNT);
+    setAmountState(normalized);
+    if (!hasInteracted) {
+      setHasInteracted(true);
     }
-    if (shouldShowError) return "견적 조회 실패";
-    if (isQuoteLoading) return "-";
-    return "-";
-  })();
+    resetSubmitErrorOnAmountChange(normalized);
+    clearFormError();
+  };
+
+  const handleModeChange = (nextMode: TradeMode) => {
+    setMode(nextMode);
+    resetFormErrors();
+  };
+
+  const handleCurrencyChange = (nextCurrency: Currency) => {
+    setTargetCurrency(nextCurrency);
+    resetFormErrors();
+  };
 
   const handleSubmit = async () => {
     setFormError(null);
 
-    if (!isAmountValid) {
-      setFormError("금액을 입력해 주세요.");
+    if (!Number.isFinite(amountValue)) {
       return;
     }
     if (!selectedRate) {
-      setFormError("환율 정보를 불러오지 못했습니다.");
-      return;
-    }
-    if (isQuoteError) {
-      setFormError("견적 조회 후 다시 시도해 주세요.");
+      const errorMessage = getApiErrorMessage(exchangeRatesError);
+      if (errorMessage) {
+        setFormError(errorMessage);
+        setLastSubmitErrorInput(amount);
+      }
       return;
     }
 
@@ -96,40 +145,40 @@ export function useExchangeOrderForm({
       exchangeRateId: selectedRate.exchangeRateId,
       fromCurrency: isBuyMode ? KRW_CURRENCY : targetCurrency,
       toCurrency: isBuyMode ? targetCurrency : KRW_CURRENCY,
-      forexAmount: amountValue,
+      forexAmount: amount,
     };
 
     try {
       await mutateAsync(payload);
-      setAmount("");
+      setAmountState(ZERO_AMOUNT);
     } catch (error) {
-      if (error && typeof error === "object" && "response" in error) {
-        const apiError = error as { response?: { message?: string } };
-        setFormError(apiError.response?.message ?? "환전에 실패했습니다.");
-        return;
+      const errorMessage = getApiErrorMessage(error);
+      if (errorMessage) {
+        setFormError(errorMessage);
+        setLastSubmitErrorInput(amount);
       }
-      setFormError("환전에 실패했습니다.");
     }
   };
 
   const isSubmitDisabled =
     isPending ||
-    !isAmountValid ||
-    !selectedRate ||
-    shouldShowError;
+    shouldBlockSubmitForQuote ||
+    shouldBlockSubmitForFormError ||
+    isUnauthorizedError(quoteError) ||
+    isUnauthorizedError(exchangeRatesError);
 
   return {
     amount,
     appliedRate,
-    formError,
+    formError: formError ?? (shouldShowQuoteError ? displayQuoteError : null),
     handleSubmit,
     isBuyMode,
     isSubmitDisabled,
     isSubmitting: isPending,
     quoteDisplayText,
-    setAmount,
-    setMode,
-    setTargetCurrency,
+    setAmount: handleAmountChange,
+    setMode: handleModeChange,
+    setTargetCurrency: handleCurrencyChange,
     targetCurrency,
   };
 }
