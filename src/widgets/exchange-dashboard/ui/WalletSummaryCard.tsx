@@ -41,17 +41,15 @@ export function WalletSummaryCard({
     <Card
       className={cn(
         "flex flex-col rounded-xl border border-gray-300 bg-gray-0 px-6 py-6 md:px-8",
-        className,
+        className
       )}
     >
-      <h2 className="mb-8 text-[24px] font-extrabold text-gray-800">
-        내 지갑
-      </h2>
+      <h2 className="mb-8 text-[24px] font-extrabold text-gray-800">내 지갑</h2>
 
       <div className="flex flex-col gap-3">
         {WALLET_DISPLAY_ORDER.map((currency) => {
           const balance = walletSummary?.wallets.find(
-            (wallet) => wallet.currency === currency,
+            (wallet) => wallet.currency === currency
           )?.balance;
           const balanceContent =
             isLoading || typeof balance === "undefined" ? (
@@ -73,7 +71,7 @@ export function WalletSummaryCard({
         })}
       </div>
 
-      <div className="mt-auto flex items-center justify-between border-t border-gray-300 pb-2 pt-5 text-[20px]">
+      <div className="flex items-center justify-between border-t border-gray-300 pb-2 pt-5 text-[20px] lg:mt-auto mt-10">
         <span className="font-semibold text-gray-600">총 보유 자산</span>
         <span className="font-bold text-blue-500 tabular-nums">
           {totalBalanceContent}

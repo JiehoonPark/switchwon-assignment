@@ -10,7 +10,11 @@ import { ExchangeRateCards } from "./ExchangeRateCards";
 import { WalletSummaryCard } from "./WalletSummaryCard";
 
 export function ExchangeDashboard() {
-  const { data: exchangeRates, isLoading: isRatesLoading } =
+  const {
+    data: exchangeRates,
+    isLoading: isRatesLoading,
+    error: exchangeRatesError,
+  } =
     useExchangeRatesQuery();
   const { data: walletSummary, isLoading: isWalletLoading } =
     useWalletSummaryQuery();
@@ -29,6 +33,7 @@ export function ExchangeDashboard() {
       />
       <ExchangeOrderPanel
         exchangeRates={exchangeRates}
+        exchangeRatesError={exchangeRatesError}
         className="lg:col-start-2 lg:row-span-2 lg:h-full"
       />
     </section>

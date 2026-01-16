@@ -2,7 +2,11 @@ import type { ExchangeRate } from "@/entities/exchange-rate";
 import { cn, formatNumber } from "@/shared/lib";
 import { Card } from "@/shared/ui";
 
-import { FOREX_LABELS, SUPPORTED_FOREX, TRIANGLE_PATH } from "../model/constants";
+import {
+  FOREX_LABELS,
+  SUPPORTED_FOREX,
+  TRIANGLE_PATH,
+} from "../model/constants";
 
 type ExchangeRateCardsProps = {
   exchangeRates?: ExchangeRate[];
@@ -59,7 +63,7 @@ export function ExchangeRateCards({
   className,
 }: ExchangeRateCardsProps) {
   const rateByCurrency = new Map(
-    exchangeRates?.map((rate) => [rate.currency, rate]) ?? [],
+    exchangeRates?.map((rate) => [rate.currency, rate]) ?? []
   );
 
   return (
@@ -113,7 +117,7 @@ export function ExchangeRateCards({
             <div
               className={cn(
                 "mt-1 flex h-6 items-center text-sm font-semibold tabular-nums",
-                getChangeColor(rate?.changePercentage ?? 0),
+                getChangeColor(rate?.changePercentage ?? 0)
               )}
             >
               {changeContent}

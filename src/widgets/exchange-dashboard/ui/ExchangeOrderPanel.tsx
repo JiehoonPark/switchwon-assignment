@@ -23,11 +23,13 @@ import { useExchangeOrderForm } from "../model/useExchangeOrderForm";
 
 type ExchangeOrderPanelProps = {
   exchangeRates?: ExchangeRate[];
+  exchangeRatesError?: unknown;
   className?: string;
 };
 
 export function ExchangeOrderPanel({
   exchangeRates,
+  exchangeRatesError,
   className,
 }: ExchangeOrderPanelProps) {
   const {
@@ -43,7 +45,7 @@ export function ExchangeOrderPanel({
     setMode,
     setTargetCurrency,
     targetCurrency,
-  } = useExchangeOrderForm({ exchangeRates });
+  } = useExchangeOrderForm({ exchangeRates, exchangeRatesError });
 
   const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -54,7 +56,7 @@ export function ExchangeOrderPanel({
     <Card
       className={cn(
         "min-w-0 rounded-xl border border-gray-300 bg-gray-0 px-4 py-5 sm:px-6",
-        className,
+        className
       )}
     >
       <div className="mb-4 flex h-8 items-center">
@@ -97,7 +99,7 @@ export function ExchangeOrderPanel({
             "h-14.75 flex-1 rounded-xl border-none text-[20px] font-bold",
             isBuyMode
               ? "bg-danger text-white shadow-[2px_2px_4px_0_rgba(0,0,0,0.1)]"
-              : "bg-white text-[#FFA7A7]",
+              : "bg-white text-[#FFA7A7]"
           )}
         >
           살래요
@@ -109,7 +111,7 @@ export function ExchangeOrderPanel({
             "h-14.75 flex-1 rounded-xl border-none text-[20px] font-bold",
             isBuyMode
               ? "bg-white text-[#9DB6FF]"
-              : "bg-sell-primary text-white shadow-[2px_2px_4px_0_rgba(0,0,0,0.1)]",
+              : "bg-sell-primary text-white shadow-[2px_2px_4px_0_rgba(0,0,0,0.1)]"
           )}
         >
           팔래요
@@ -165,7 +167,7 @@ export function ExchangeOrderPanel({
         <div className="mb-8 flex justify-between text-[20px] text-gray-600">
           <span className="font-medium">적용 환율</span>
           <span className="font-semibold tabular-nums">
-            {appliedRate
+            {appliedRate !== undefined && !Number.isNaN(appliedRate)
               ? `1 ${targetCurrency} = ${formatNumber(appliedRate)} 원`
               : "조회 중"}
           </span>
@@ -174,7 +176,7 @@ export function ExchangeOrderPanel({
         <Button
           type="submit"
           disabled={isSubmitDisabled}
-          className="h-19.25 rounded-xl bg-cta text-[22px] font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
+          className="h-19.25 rounded-xl bg-cta text-[22px] font-bold text-white disabled:cursor-not-allowed"
         >
           {isSubmitting ? "환전 중..." : "환전하기"}
         </Button>
